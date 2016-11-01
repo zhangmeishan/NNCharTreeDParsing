@@ -186,6 +186,7 @@ struct ActionedNodes {
 	APC2Node SYN__s0s1_CWd__s0s1_CWl__ac;
 	APC3Node PW__p1_Wd__p1_T__p1_Wl;
 
+	SPAddAllDimNode sumNode;
 	vector<SPAddNode> outputs;
 
 public:
@@ -366,6 +367,7 @@ public:
 		SYN__s0s1_CWd__s0s1_CWl__ac.setParam(&params.SYN__s0s1_CWd__s0s1_CWl__ac);
 		PW__p1_Wd__p1_T__p1_Wl.setParam(&params.PW__p1_Wd__p1_T__p1_Wl);
 
+		sumNode.setParam(hyparams.action_num);
 		outputs.resize(hyparams.action_num);
 	}
 
@@ -566,217 +568,220 @@ public:
 			SYN__s0s1_ALd__s0s1_CWl__ac.forward(cg, atomFeat.sid_s0s1_ALd, atomFeat.sid_s0s1_CWl);
 			SYN__s0s1_ARd__s0s1_CWl__ac.forward(cg, atomFeat.sid_s0s1_ARd, atomFeat.sid_s0s1_CWl);
 			SYN__s0s1_CWd__s0s1_CWl__ac.forward(cg, atomFeat.sid_s0s1_CWd, atomFeat.sid_s0s1_CWl);
-		}		
+		}	
 
+		//second step 
 		static vector<PNode> sumNodes;
+		sumNodes.clear();
+		if (atomFeat.allow_shift_in){
+			if (SHI__p1_C__n0_C.executed)sumNodes.push_back(&SHI__p1_C__n0_C);
+			if (SHI__p1_Wfc__n0_C.executed)sumNodes.push_back(&SHI__p1_Wfc__n0_C);
+			if (SHI__p2_Ct__p1_Ct__p2_Ct.executed)sumNodes.push_back(&SHI__p2_Ct__p1_Ct__p2_Ct);
+
+			if (SHI__p1_C__n0_C__p1_T.executed)sumNodes.push_back(&SHI__p1_C__n0_C__p1_T);
+			if (SHI__p1_Wfc__n0_C__p1_T.executed)sumNodes.push_back(&SHI__p1_Wfc__n0_C__p1_T);
+			if (SHI__p2_Ct__p1_Ct__n0_Ct__p1_T.executed)sumNodes.push_back(&SHI__p2_Ct__p1_Ct__n0_Ct__p1_T);
+		}
+
+		if (atomFeat.allow_pop_word){
+			if (PW__p1_C__n0_C.executed)sumNodes.push_back(&PW__p1_C__n0_C);
+			if (PW__p1_Wfc__n0_C.executed)sumNodes.push_back(&PW__p1_Wfc__n0_C);
+			if (PW__p2_Ct__p1_Ct__p2_Ct.executed)sumNodes.push_back(&PW__p2_Ct__p1_Ct__p2_Ct);
+			if (PW__p1_W.executed)sumNodes.push_back(&PW__p1_W);
+			if (PW__p1_Wd__p1_Wl.executed)sumNodes.push_back(&PW__p1_Wd__p1_Wl);
+			if (PW__p1_WSingle.executed && atomFeat.sid_p1_Wl == 1)sumNodes.push_back(&PW__p1_WSingle);
+			if (PW__p1_W__n0_C.executed)sumNodes.push_back(&PW__p1_W__n0_C);
+			if (PW__p2_W__p1_W.executed)sumNodes.push_back(&PW__p2_W__p1_W);
+			if (PW__p2_Wfc__p1_W.executed)sumNodes.push_back(&PW__p2_Wfc__p1_W);
+			if (PW__p2_Wec__p1_W.executed)sumNodes.push_back(&PW__p2_Wec__p1_W);
+			if (PW__p2_Wfc__p1_Wfc.executed)sumNodes.push_back(&PW__p2_Wfc__p1_Wfc);
+			if (PW__p2_Wec__p1_C.executed)sumNodes.push_back(&PW__p2_Wec__p1_C);
+			if (PW__p2_W__p1_Wl.executed)sumNodes.push_back(&PW__p2_W__p1_Wl);
+			if (PW__p2_Wl__p1_W.executed)sumNodes.push_back(&PW__p2_Wl__p1_W);
+			if (PW__p2_W__p1_C.executed)sumNodes.push_back(&PW__p2_W__p1_C);
+			if (PW__p1_Wfc__p1_Wl.executed)sumNodes.push_back(&PW__p1_Wfc__p1_Wl);
+			if (PW__p1_C__p1_Wl.executed)sumNodes.push_back(&PW__p1_C__p1_Wl);
+			for (int idy = 0; idy < atomFeat.sid_p1_Wmc.size() && idy < max_seg_length; idy++){
+				if (PW__p1_Wmc__p1_C__p1_T[idy].executed)sumNodes.push_back(&(PW__p1_Wmc__p1_C__p1_T[idy]));
+			}
+		}
+
+		if (atomFeat.allow_pop_root || atomFeat.is_terminated || atomFeat.allow_arc_left_out || atomFeat.allow_arc_right_out
+			|| atomFeat.allow_shift || atomFeat.allow_shift_in || atomFeat.allow_arc_left_in || atomFeat.allow_arc_right_in){
+			if (SYN__s0_W__ac.executed)sumNodes.push_back(&SYN__s0_W__ac);
+			if (SYN__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_T__ac);
+			if (SYN__s0_W__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s0_T__ac);
+			if (SYN__s1_W__ac.executed)sumNodes.push_back(&SYN__s1_W__ac);
+			if (SYN__s1_T__ac.executed)sumNodes.push_back(&SYN__s1_T__ac);
+			if (SYN__s1_W__s1_T__ac.executed)sumNodes.push_back(&SYN__s1_W__s1_T__ac);
+			if (SYN__n0_C__ac.executed)sumNodes.push_back(&SYN__n0_C__ac);
+			if (SYN__n1_C__ac.executed)sumNodes.push_back(&SYN__n1_C__ac);
+			if (SYN__n0_C__n1_C__ac.executed)sumNodes.push_back(&SYN__n0_C__n1_C__ac);
+			if (SYN__s0_W__s1_W__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__ac);
+			if (SYN__s0_T__s1_W__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_W__ac);
+			if (SYN__s0_W__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_T__ac);
+			if (SYN__s0_T__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__ac);
+			if (SYN__s0_W__s1_W__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__s0_T__ac);
+			if (SYN__s0_W__s1_W__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__s1_T__ac);
+			if (SYN__s0_T__s1_T__s0_W__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0_W__ac);
+			if (SYN__s0_T__s1_T__s1_W__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1_W__ac);
+			if (SYN__s0_W__s1_W__s0_T__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__s0_T__s1_T__ac);
+			if (SYN__s0rd1_W__ac.executed)sumNodes.push_back(&SYN__s0rd1_W__ac);
+			if (SYN__s0rd1_T__ac.executed)sumNodes.push_back(&SYN__s0rd1_T__ac);
+			if (SYN__s0rd1_P__ac.executed)sumNodes.push_back(&SYN__s0rd1_P__ac);
+			if (SYN__s0rd1_W__s0rd1_T__ac.executed)sumNodes.push_back(&SYN__s0rd1_W__s0rd1_T__ac);
+			if (SYN__s0ld1_W__ac.executed)sumNodes.push_back(&SYN__s0ld1_W__ac);
+			if (SYN__s0ld1_T__ac.executed)sumNodes.push_back(&SYN__s0ld1_T__ac);
+			if (SYN__s0ld1_P__ac.executed)sumNodes.push_back(&SYN__s0ld1_P__ac);
+			if (SYN__s0ld1_W__s0ld1_T__ac.executed)sumNodes.push_back(&SYN__s0ld1_W__s0ld1_T__ac);
+			if (SYN__s0rd2_W__ac.executed)sumNodes.push_back(&SYN__s0rd2_W__ac);
+			if (SYN__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0rd2_T__ac);
+			if (SYN__s0rd2_P__ac.executed)sumNodes.push_back(&SYN__s0rd2_P__ac);
+			if (SYN__s0rd2_W__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0rd2_W__s0rd2_T__ac);
+			if (SYN__s0ld2_W__ac.executed)sumNodes.push_back(&SYN__s0ld2_W__ac);
+			if (SYN__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0ld2_T__ac);
+			if (SYN__s0ld2_P__ac.executed)sumNodes.push_back(&SYN__s0ld2_P__ac);
+			if (SYN__s0ld2_W__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0ld2_W__s0ld2_T__ac);
+			if (SYN__s0_T__s0ld1_T__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s0ld1_T__s0ld2_T__ac);
+			if (SYN__s0_T__s0rd1_T__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s0rd1_T__s0rd2_T__ac);
+			if (SYN__s1_T__s1ld1_T__s1ld2_T__ac.executed)sumNodes.push_back(&SYN__s1_T__s1ld1_T__s1ld2_T__ac);
+			if (SYN__s1_T__s1rd1_T__s1rd2_T__ac.executed)sumNodes.push_back(&SYN__s1_T__s1rd1_T__s1rd2_T__ac);
+			if (SYN__s0_T__s1_T__s0ld1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0ld1_T__ac);
+			if (SYN__s0_T__s1_T__s0rd1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0rd1_T__ac);
+			if (SYN__s0_T__s1_T__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0ld2_T__ac);
+			if (SYN__s0_T__s1_T__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0rd2_T__ac);
+			if (SYN__s0_T__s1_T__s1ld1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1ld1_T__ac);
+			if (SYN__s0_T__s1_T__s1rd1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1rd1_T__ac);
+			if (SYN__s0_T__s1_T__s1ld2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1ld2_T__ac);
+			if (SYN__s0_T__s1_T__s1rd2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1rd2_T__ac);
+			if (SYN__s0_T__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_T__s0s1_dist__ac);
+			if (SYN__s0_W__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_W__s0s1_dist__ac);
+			if (SYN__s1_T__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s1_T__s0s1_dist__ac);
+			if (SYN__s1_W__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s1_W__s0s1_dist__ac);
+			if (SYN__s0_T__s1_T__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0s1_dist__ac);
+			if (SYN__s0_W__s1_W__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__s0s1_dist__ac);
+			if (SYN__s0_T__s0_larity__ac.executed)sumNodes.push_back(&SYN__s0_T__s0_larity__ac);
+			if (SYN__s0_W__s0_larity__ac.executed)sumNodes.push_back(&SYN__s0_W__s0_larity__ac);
+			if (SYN__s0_T__s0_rarity__ac.executed)sumNodes.push_back(&SYN__s0_T__s0_rarity__ac);
+			if (SYN__s0_W__s0_rarity__ac.executed)sumNodes.push_back(&SYN__s0_W__s0_rarity__ac);
+			if (SYN__s1_T__s1_larity__ac.executed)sumNodes.push_back(&SYN__s1_T__s1_larity__ac);
+			if (SYN__s1_W__s1_larity__ac.executed)sumNodes.push_back(&SYN__s1_W__s1_larity__ac);
+			if (SYN__s1_T__s1_rarity__ac.executed)sumNodes.push_back(&SYN__s1_T__s1_rarity__ac);
+			if (SYN__s1_W__s1_rarity__ac.executed)sumNodes.push_back(&SYN__s1_W__s1_rarity__ac);
+			if (SYN__s0_W__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_W__n0_C__ac);
+			if (SYN__s0_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_T__n0_C__ac);
+			if (SYN__s0_W__s0_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_W__s0_T__n0_C__ac);
+			if (SYN__s1_W__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_W__n0_C__ac);
+			if (SYN__s1_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_T__n0_C__ac);
+			if (SYN__s1_W__s1_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_W__s1_T__n0_C__ac);
+			if (SYN__n0_C__s0_W__s1_W__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_W__s1_W__ac);
+			if (SYN__n0_C__s0_T__s1_T__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_T__s1_T__ac);
+			if (SYN__n0_C__s0_W__s1_T__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_W__s1_T__ac);
+			if (SYN__n0_C__s0_T__s1_W__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_T__s1_W__ac);
+			if (SYN__s0_T__s1_T__s2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s2_T__ac);
+			if (SYN__s0_C__ac.executed)sumNodes.push_back(&SYN__s0_C__ac);
+			if (SYN__s0_C__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s0_T__ac);
+			if (SYN__s1_C__ac.executed)sumNodes.push_back(&SYN__s1_C__ac);
+			if (SYN__s1_C__s1_T__ac.executed)sumNodes.push_back(&SYN__s1_C__s1_T__ac);
+			if (SYN__s0_C__s1_C__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__ac);
+			if (SYN__s0_T__s1_C__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_C__ac);
+			if (SYN__s0_C__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_T__ac);
+			if (SYN__s0_C__s1_C__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__s0_T__ac);
+			if (SYN__s0_C__s1_C__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__s1_T__ac);
+			if (SYN__s0_T__s1_T__s0_C__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0_C__ac);
+			if (SYN__s0_T__s1_T__s1_C__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1_C__ac);
+			if (SYN__s0_C__s1_C__s0_T__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__s0_T__s1_T__ac);
+			if (SYN__s0rd1_C__ac.executed)sumNodes.push_back(&SYN__s0rd1_C__ac);
+			if (SYN__s0rd1_C__s0rd1_T__ac.executed)sumNodes.push_back(&SYN__s0rd1_C__s0rd1_T__ac);
+			if (SYN__s0ld1_C__ac.executed)sumNodes.push_back(&SYN__s0ld1_C__ac);
+			if (SYN__s0ld1_C__s0ld1_T__ac.executed)sumNodes.push_back(&SYN__s0ld1_C__s0ld1_T__ac);
+			if (SYN__s0rd2_C__ac.executed)sumNodes.push_back(&SYN__s0rd2_C__ac);
+			if (SYN__s0rd2_C__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0rd2_C__s0rd2_T__ac);
+			if (SYN__s0ld2_C__ac.executed)sumNodes.push_back(&SYN__s0ld2_C__ac);
+			if (SYN__s0ld2_C__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0ld2_C__s0ld2_T__ac);
+			if (SYN__s0_C__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_C__s0s1_dist__ac);
+			if (SYN__s1_C__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s1_C__s0s1_dist__ac);
+			if (SYN__s0_C__s1_C__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__s0s1_dist__ac);
+			if (SYN__s0_C__s0_larity__ac.executed)sumNodes.push_back(&SYN__s0_C__s0_larity__ac);
+			if (SYN__s0_C__s0_rarity__ac.executed)sumNodes.push_back(&SYN__s0_C__s0_rarity__ac);
+			if (SYN__s1_C__s1_larity__ac.executed)sumNodes.push_back(&SYN__s1_C__s1_larity__ac);
+			if (SYN__s1_C__s1_rarity__ac.executed)sumNodes.push_back(&SYN__s1_C__s1_rarity__ac);
+			if (SYN__s0_C__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_C__n0_C__ac);
+			if (SYN__s0_C__s0_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_C__s0_T__n0_C__ac);
+			if (SYN__s1_C__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_C__n0_C__ac);
+			if (SYN__s1_C__s1_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_C__s1_T__n0_C__ac);
+			if (SYN__n0_C__s0_C__s1_C__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_C__s1_C__ac);
+			if (SYN__n0_C__s0_C__s1_T__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_C__s1_T__ac);
+			if (SYN__n0_C__s0_T__s1_C__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_T__s1_C__ac);
+		}
+
+		if (atomFeat.allow_shift){
+			if (SHO__p1_W__p1_T.executed)sumNodes.push_back(&SHO__p1_W__p1_T);
+			if (SHO__p1_W__p2_T.executed)sumNodes.push_back(&SHO__p1_W__p2_T);
+			if (SHO__p2_Wec__p1_W__p1_T.executed)sumNodes.push_back(&SHO__p2_Wec__p1_W__p1_T);
+			if (SHO__p2_Wec__p1_W__n0_C__p1_T.executed)sumNodes.push_back(&SHO__p2_Wec__p1_W__n0_C__p1_T);
+			if (SHO__p1_C__p1_T.executed)sumNodes.push_back(&SHO__p1_C__p1_T);
+			if (SHO__p1_Cc__p1_T.executed)sumNodes.push_back(&SHO__p1_Cc__p1_T);
+			if (SHO__p1_T__ac.executed)sumNodes.push_back(&SHO__p1_T__ac);
+			if (SHO__p1_Wl__p1_T__ac.executed)sumNodes.push_back(&SHO__p1_Wl__p1_T__ac);
+			if (SHO__p1_Wl__p1_T__p2_T.executed)sumNodes.push_back(&SHO__p1_Wl__p1_T__p2_T);
+			if (SHO__p1_Wl__p1_T__p2_T__ac.executed)sumNodes.push_back(&SHO__p1_Wl__p1_T__p2_T__ac);
+			if (SHO__p1_W__ac.executed)sumNodes.push_back(&SHO__p1_W__ac);
+			if (SHO__p1_T__p2_T__ac.executed)sumNodes.push_back(&SHO__p1_T__p2_T__ac);
+			if (SHO__p1_W__n0_C__p1_T.executed)sumNodes.push_back(&SHO__p1_W__n0_C__p1_T);
+			if (SHO__n0_C__ac.executed)sumNodes.push_back(&SHO__n0_C__ac);
+			if (SHO__n0_Cc__ac.executed)sumNodes.push_back(&SHO__n0_Cc__ac);
+			if (SHO__n0_C__p1_T__ac.executed)sumNodes.push_back(&SHO__n0_C__p1_T__ac);
+			if (SHO__n0_C__p1_T__p2_T__ac.executed)sumNodes.push_back(&SHO__n0_C__p1_T__p2_T__ac);
+			if (SHO__n0_C__p1_T.executed)sumNodes.push_back(&SHO__n0_C__p1_T);
+			if (SHO__n0_C__p1_C__p1_T__ac.executed)sumNodes.push_back(&SHO__n0_C__p1_C__p1_T__ac);
+			if (SHO__p1_W__p2_T__ac.executed)sumNodes.push_back(&SHO__p1_W__p2_T__ac);
+			if (SHO__p2_W__p1_T__ac.executed)sumNodes.push_back(&SHO__p2_W__p1_T__ac);
+
+			if (SHO__p1_Whc__p1_T.executed)sumNodes.push_back(&SHO__p1_Whc__p1_T);
+			if (SHO__p1_Whc__p2_T.executed)sumNodes.push_back(&SHO__p1_Whc__p2_T);
+			if (SHO__p2_Wec__p1_Whc__p1_T.executed)sumNodes.push_back(&SHO__p2_Wec__p1_Whc__p1_T);
+			if (SHO__p2_Wec__p1_Whc__n0_C__p1_T.executed)sumNodes.push_back(&SHO__p2_Wec__p1_Whc__n0_C__p1_T);
+			if (SHO__p1_Whc__ac.executed)sumNodes.push_back(&SHO__p1_Whc__ac);
+			if (SHO__p1_Whc__n0_C__p1_T.executed)sumNodes.push_back(&SHO__p1_Whc__n0_C__p1_T);
+			if (SHO__p1_Whc__p2_T__ac.executed)sumNodes.push_back(&SHO__p1_Whc__p2_T__ac);
+			if (SHO__p2_Whc__p1_T__ac.executed)sumNodes.push_back(&SHO__p2_Whc__p1_T__ac);
+		}
+
+		if (atomFeat.allow_pop_word){
+			if (PW__p1_Whc__n0_C.executed)sumNodes.push_back(&PW__p1_Whc__n0_C);
+			if (PW__p2_Whc__p1_Whc.executed)sumNodes.push_back(&PW__p2_Whc__p1_Whc);
+			if (PW__p2_Wfc__p1_Whc.executed)sumNodes.push_back(&PW__p2_Wfc__p1_Whc);
+			if (PW__p2_Wec__p1_Whc.executed)sumNodes.push_back(&PW__p2_Wec__p1_Whc);
+			if (PW__p2_W__p1_Whc.executed)sumNodes.push_back(&PW__p2_W__p1_Whc);
+			if (PW__p2_Whc__p1_W.executed)sumNodes.push_back(&PW__p2_Whc__p1_W);
+			if (PW__p2_Whc__p1_Wl.executed)sumNodes.push_back(&PW__p2_Whc__p1_Wl);
+			if (PW__p2_Wl__p1_Whc.executed)sumNodes.push_back(&PW__p2_Wl__p1_Whc);
+			if (PW__p2_Whc__p1_C.executed)sumNodes.push_back(&PW__p2_Whc__p1_C);
+			if (PW__p1_Whc__p1_Wl.executed)sumNodes.push_back(&PW__p1_Whc__p1_Wl);
+
+			if (PW__p1_Wd__p1_T__p1_Wl.executed)sumNodes.push_back(&PW__p1_Wd__p1_T__p1_Wl);
+		}
+
+		if (atomFeat.allow_arc_left_in || atomFeat.allow_arc_right_in){
+			if (SYN__s0s1_ALd__s0s1_CWl__ac.executed)sumNodes.push_back(&SYN__s0s1_ALd__s0s1_CWl__ac);
+			if (SYN__s0s1_ARd__s0s1_CWl__ac.executed)sumNodes.push_back(&SYN__s0s1_ARd__s0s1_CWl__ac);
+			if (SYN__s0s1_CWd__s0s1_CWl__ac.executed)sumNodes.push_back(&SYN__s0s1_CWd__s0s1_CWl__ac);
+		}
+
+		sumNode.forward(cg, sumNodes);
+		
 		static CAction ac;
 		static int ac_num;
 		ac_num = actions.size();
-		
 		for (int idx = 0; idx < ac_num; idx++){
 			ac.set(actions[idx]._code);
-			sumNodes.clear();
-			if (ac.isShiftIn()){
-				if (SHI__p1_C__n0_C.executed)sumNodes.push_back(&SHI__p1_C__n0_C);
-				if (SHI__p1_Wfc__n0_C.executed)sumNodes.push_back(&SHI__p1_Wfc__n0_C);
-				if (SHI__p2_Ct__p1_Ct__p2_Ct.executed)sumNodes.push_back(&SHI__p2_Ct__p1_Ct__p2_Ct);
-
-				if (SHI__p1_C__n0_C__p1_T.executed)sumNodes.push_back(&SHI__p1_C__n0_C__p1_T);
-				if (SHI__p1_Wfc__n0_C__p1_T.executed)sumNodes.push_back(&SHI__p1_Wfc__n0_C__p1_T);
-				if (SHI__p2_Ct__p1_Ct__n0_Ct__p1_T.executed)sumNodes.push_back(&SHI__p2_Ct__p1_Ct__n0_Ct__p1_T);
-			}
-
-			if (ac.isPopWord()){
-				if (PW__p1_C__n0_C.executed)sumNodes.push_back(&PW__p1_C__n0_C);
-				if (PW__p1_Wfc__n0_C.executed)sumNodes.push_back(&PW__p1_Wfc__n0_C);
-				if (PW__p2_Ct__p1_Ct__p2_Ct.executed)sumNodes.push_back(&PW__p2_Ct__p1_Ct__p2_Ct);
-				if (PW__p1_W.executed)sumNodes.push_back(&PW__p1_W);
-				if (PW__p1_Wd__p1_Wl.executed)sumNodes.push_back(&PW__p1_Wd__p1_Wl);
-				if (PW__p1_WSingle.executed && atomFeat.sid_p1_Wl == 1)sumNodes.push_back(&PW__p1_WSingle);
-				if (PW__p1_W__n0_C.executed)sumNodes.push_back(&PW__p1_W__n0_C);
-				if (PW__p2_W__p1_W.executed)sumNodes.push_back(&PW__p2_W__p1_W);
-				if (PW__p2_Wfc__p1_W.executed)sumNodes.push_back(&PW__p2_Wfc__p1_W);
-				if (PW__p2_Wec__p1_W.executed)sumNodes.push_back(&PW__p2_Wec__p1_W);
-				if (PW__p2_Wfc__p1_Wfc.executed)sumNodes.push_back(&PW__p2_Wfc__p1_Wfc);
-				if (PW__p2_Wec__p1_C.executed)sumNodes.push_back(&PW__p2_Wec__p1_C);
-				if (PW__p2_W__p1_Wl.executed)sumNodes.push_back(&PW__p2_W__p1_Wl);
-				if (PW__p2_Wl__p1_W.executed)sumNodes.push_back(&PW__p2_Wl__p1_W);
-				if (PW__p2_W__p1_C.executed)sumNodes.push_back(&PW__p2_W__p1_C);
-				if (PW__p1_Wfc__p1_Wl.executed)sumNodes.push_back(&PW__p1_Wfc__p1_Wl);
-				if (PW__p1_C__p1_Wl.executed)sumNodes.push_back(&PW__p1_C__p1_Wl);
-				for (int idy = 0; idy < atomFeat.sid_p1_Wmc.size() && idy < max_seg_length; idy++){
-					if (PW__p1_Wmc__p1_C__p1_T[idy].executed)sumNodes.push_back(&(PW__p1_Wmc__p1_C__p1_T[idy]));
-				}
-			}
-
-			if (!ac.isPopWord()){
-				if (SYN__s0_W__ac.executed)sumNodes.push_back(&SYN__s0_W__ac);
-				if (SYN__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_T__ac);
-				if (SYN__s0_W__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s0_T__ac);
-				if (SYN__s1_W__ac.executed)sumNodes.push_back(&SYN__s1_W__ac);
-				if (SYN__s1_T__ac.executed)sumNodes.push_back(&SYN__s1_T__ac);
-				if (SYN__s1_W__s1_T__ac.executed)sumNodes.push_back(&SYN__s1_W__s1_T__ac);
-				if (SYN__n0_C__ac.executed)sumNodes.push_back(&SYN__n0_C__ac);
-				if (SYN__n1_C__ac.executed)sumNodes.push_back(&SYN__n1_C__ac);
-				if (SYN__n0_C__n1_C__ac.executed)sumNodes.push_back(&SYN__n0_C__n1_C__ac);
-				if (SYN__s0_W__s1_W__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__ac);
-				if (SYN__s0_T__s1_W__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_W__ac);
-				if (SYN__s0_W__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_T__ac);
-				if (SYN__s0_T__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__ac);
-				if (SYN__s0_W__s1_W__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__s0_T__ac);
-				if (SYN__s0_W__s1_W__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__s1_T__ac);
-				if (SYN__s0_T__s1_T__s0_W__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0_W__ac);
-				if (SYN__s0_T__s1_T__s1_W__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1_W__ac);
-				if (SYN__s0_W__s1_W__s0_T__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__s0_T__s1_T__ac);
-				if (SYN__s0rd1_W__ac.executed)sumNodes.push_back(&SYN__s0rd1_W__ac);
-				if (SYN__s0rd1_T__ac.executed)sumNodes.push_back(&SYN__s0rd1_T__ac);
-				if (SYN__s0rd1_P__ac.executed)sumNodes.push_back(&SYN__s0rd1_P__ac);
-				if (SYN__s0rd1_W__s0rd1_T__ac.executed)sumNodes.push_back(&SYN__s0rd1_W__s0rd1_T__ac);
-				if (SYN__s0ld1_W__ac.executed)sumNodes.push_back(&SYN__s0ld1_W__ac);
-				if (SYN__s0ld1_T__ac.executed)sumNodes.push_back(&SYN__s0ld1_T__ac);
-				if (SYN__s0ld1_P__ac.executed)sumNodes.push_back(&SYN__s0ld1_P__ac);
-				if (SYN__s0ld1_W__s0ld1_T__ac.executed)sumNodes.push_back(&SYN__s0ld1_W__s0ld1_T__ac);
-				if (SYN__s0rd2_W__ac.executed)sumNodes.push_back(&SYN__s0rd2_W__ac);
-				if (SYN__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0rd2_T__ac);
-				if (SYN__s0rd2_P__ac.executed)sumNodes.push_back(&SYN__s0rd2_P__ac);
-				if (SYN__s0rd2_W__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0rd2_W__s0rd2_T__ac);
-				if (SYN__s0ld2_W__ac.executed)sumNodes.push_back(&SYN__s0ld2_W__ac);
-				if (SYN__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0ld2_T__ac);
-				if (SYN__s0ld2_P__ac.executed)sumNodes.push_back(&SYN__s0ld2_P__ac);
-				if (SYN__s0ld2_W__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0ld2_W__s0ld2_T__ac);
-				if (SYN__s0_T__s0ld1_T__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s0ld1_T__s0ld2_T__ac);
-				if (SYN__s0_T__s0rd1_T__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s0rd1_T__s0rd2_T__ac);
-				if (SYN__s1_T__s1ld1_T__s1ld2_T__ac.executed)sumNodes.push_back(&SYN__s1_T__s1ld1_T__s1ld2_T__ac);
-				if (SYN__s1_T__s1rd1_T__s1rd2_T__ac.executed)sumNodes.push_back(&SYN__s1_T__s1rd1_T__s1rd2_T__ac);
-				if (SYN__s0_T__s1_T__s0ld1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0ld1_T__ac);
-				if (SYN__s0_T__s1_T__s0rd1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0rd1_T__ac);
-				if (SYN__s0_T__s1_T__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0ld2_T__ac);
-				if (SYN__s0_T__s1_T__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0rd2_T__ac);
-				if (SYN__s0_T__s1_T__s1ld1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1ld1_T__ac);
-				if (SYN__s0_T__s1_T__s1rd1_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1rd1_T__ac);
-				if (SYN__s0_T__s1_T__s1ld2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1ld2_T__ac);
-				if (SYN__s0_T__s1_T__s1rd2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1rd2_T__ac);
-				if (SYN__s0_T__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_T__s0s1_dist__ac);
-				if (SYN__s0_W__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_W__s0s1_dist__ac);
-				if (SYN__s1_T__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s1_T__s0s1_dist__ac);
-				if (SYN__s1_W__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s1_W__s0s1_dist__ac);
-				if (SYN__s0_T__s1_T__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0s1_dist__ac);
-				if (SYN__s0_W__s1_W__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_W__s1_W__s0s1_dist__ac);
-				if (SYN__s0_T__s0_larity__ac.executed)sumNodes.push_back(&SYN__s0_T__s0_larity__ac);
-				if (SYN__s0_W__s0_larity__ac.executed)sumNodes.push_back(&SYN__s0_W__s0_larity__ac);
-				if (SYN__s0_T__s0_rarity__ac.executed)sumNodes.push_back(&SYN__s0_T__s0_rarity__ac);
-				if (SYN__s0_W__s0_rarity__ac.executed)sumNodes.push_back(&SYN__s0_W__s0_rarity__ac);
-				if (SYN__s1_T__s1_larity__ac.executed)sumNodes.push_back(&SYN__s1_T__s1_larity__ac);
-				if (SYN__s1_W__s1_larity__ac.executed)sumNodes.push_back(&SYN__s1_W__s1_larity__ac);
-				if (SYN__s1_T__s1_rarity__ac.executed)sumNodes.push_back(&SYN__s1_T__s1_rarity__ac);
-				if (SYN__s1_W__s1_rarity__ac.executed)sumNodes.push_back(&SYN__s1_W__s1_rarity__ac);
-				if (SYN__s0_W__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_W__n0_C__ac);
-				if (SYN__s0_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_T__n0_C__ac);
-				if (SYN__s0_W__s0_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_W__s0_T__n0_C__ac);
-				if (SYN__s1_W__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_W__n0_C__ac);
-				if (SYN__s1_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_T__n0_C__ac);
-				if (SYN__s1_W__s1_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_W__s1_T__n0_C__ac);
-				if (SYN__n0_C__s0_W__s1_W__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_W__s1_W__ac);
-				if (SYN__n0_C__s0_T__s1_T__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_T__s1_T__ac);
-				if (SYN__n0_C__s0_W__s1_T__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_W__s1_T__ac);
-				if (SYN__n0_C__s0_T__s1_W__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_T__s1_W__ac);
-				if (SYN__s0_T__s1_T__s2_T__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s2_T__ac);
-				if (SYN__s0_C__ac.executed)sumNodes.push_back(&SYN__s0_C__ac);
-				if (SYN__s0_C__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s0_T__ac);
-				if (SYN__s1_C__ac.executed)sumNodes.push_back(&SYN__s1_C__ac);
-				if (SYN__s1_C__s1_T__ac.executed)sumNodes.push_back(&SYN__s1_C__s1_T__ac);
-				if (SYN__s0_C__s1_C__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__ac);
-				if (SYN__s0_T__s1_C__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_C__ac);
-				if (SYN__s0_C__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_T__ac);
-				if (SYN__s0_C__s1_C__s0_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__s0_T__ac);
-				if (SYN__s0_C__s1_C__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__s1_T__ac);
-				if (SYN__s0_T__s1_T__s0_C__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s0_C__ac);
-				if (SYN__s0_T__s1_T__s1_C__ac.executed)sumNodes.push_back(&SYN__s0_T__s1_T__s1_C__ac);
-				if (SYN__s0_C__s1_C__s0_T__s1_T__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__s0_T__s1_T__ac);
-				if (SYN__s0rd1_C__ac.executed)sumNodes.push_back(&SYN__s0rd1_C__ac);
-				if (SYN__s0rd1_C__s0rd1_T__ac.executed)sumNodes.push_back(&SYN__s0rd1_C__s0rd1_T__ac);
-				if (SYN__s0ld1_C__ac.executed)sumNodes.push_back(&SYN__s0ld1_C__ac);
-				if (SYN__s0ld1_C__s0ld1_T__ac.executed)sumNodes.push_back(&SYN__s0ld1_C__s0ld1_T__ac);
-				if (SYN__s0rd2_C__ac.executed)sumNodes.push_back(&SYN__s0rd2_C__ac);
-				if (SYN__s0rd2_C__s0rd2_T__ac.executed)sumNodes.push_back(&SYN__s0rd2_C__s0rd2_T__ac);
-				if (SYN__s0ld2_C__ac.executed)sumNodes.push_back(&SYN__s0ld2_C__ac);
-				if (SYN__s0ld2_C__s0ld2_T__ac.executed)sumNodes.push_back(&SYN__s0ld2_C__s0ld2_T__ac);
-				if (SYN__s0_C__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_C__s0s1_dist__ac);
-				if (SYN__s1_C__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s1_C__s0s1_dist__ac);
-				if (SYN__s0_C__s1_C__s0s1_dist__ac.executed)sumNodes.push_back(&SYN__s0_C__s1_C__s0s1_dist__ac);
-				if (SYN__s0_C__s0_larity__ac.executed)sumNodes.push_back(&SYN__s0_C__s0_larity__ac);
-				if (SYN__s0_C__s0_rarity__ac.executed)sumNodes.push_back(&SYN__s0_C__s0_rarity__ac);
-				if (SYN__s1_C__s1_larity__ac.executed)sumNodes.push_back(&SYN__s1_C__s1_larity__ac);
-				if (SYN__s1_C__s1_rarity__ac.executed)sumNodes.push_back(&SYN__s1_C__s1_rarity__ac);
-				if (SYN__s0_C__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_C__n0_C__ac);
-				if (SYN__s0_C__s0_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s0_C__s0_T__n0_C__ac);
-				if (SYN__s1_C__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_C__n0_C__ac);
-				if (SYN__s1_C__s1_T__n0_C__ac.executed)sumNodes.push_back(&SYN__s1_C__s1_T__n0_C__ac);
-				if (SYN__n0_C__s0_C__s1_C__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_C__s1_C__ac);
-				if (SYN__n0_C__s0_C__s1_T__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_C__s1_T__ac);
-				if (SYN__n0_C__s0_T__s1_C__ac.executed)sumNodes.push_back(&SYN__n0_C__s0_T__s1_C__ac);
-			}
-
-			if (ac.isShift()){
-				if (SHO__p1_W__p1_T.executed)sumNodes.push_back(&SHO__p1_W__p1_T);
-				if (SHO__p1_W__p2_T.executed)sumNodes.push_back(&SHO__p1_W__p2_T);
-				if (SHO__p2_Wec__p1_W__p1_T.executed)sumNodes.push_back(&SHO__p2_Wec__p1_W__p1_T);
-				if (SHO__p2_Wec__p1_W__n0_C__p1_T.executed)sumNodes.push_back(&SHO__p2_Wec__p1_W__n0_C__p1_T);
-				if (SHO__p1_C__p1_T.executed)sumNodes.push_back(&SHO__p1_C__p1_T);
-				if (SHO__p1_Cc__p1_T.executed)sumNodes.push_back(&SHO__p1_Cc__p1_T);
-				if (SHO__p1_T__ac.executed)sumNodes.push_back(&SHO__p1_T__ac);
-				if (SHO__p1_Wl__p1_T__ac.executed)sumNodes.push_back(&SHO__p1_Wl__p1_T__ac);
-				if (SHO__p1_Wl__p1_T__p2_T.executed)sumNodes.push_back(&SHO__p1_Wl__p1_T__p2_T);
-				if (SHO__p1_Wl__p1_T__p2_T__ac.executed)sumNodes.push_back(&SHO__p1_Wl__p1_T__p2_T__ac);
-				if (SHO__p1_W__ac.executed)sumNodes.push_back(&SHO__p1_W__ac);
-				if (SHO__p1_T__p2_T__ac.executed)sumNodes.push_back(&SHO__p1_T__p2_T__ac);
-				if (SHO__p1_W__n0_C__p1_T.executed)sumNodes.push_back(&SHO__p1_W__n0_C__p1_T);
-				if (SHO__n0_C__ac.executed)sumNodes.push_back(&SHO__n0_C__ac);
-				if (SHO__n0_Cc__ac.executed)sumNodes.push_back(&SHO__n0_Cc__ac);
-				if (SHO__n0_C__p1_T__ac.executed)sumNodes.push_back(&SHO__n0_C__p1_T__ac);
-				if (SHO__n0_C__p1_T__p2_T__ac.executed)sumNodes.push_back(&SHO__n0_C__p1_T__p2_T__ac);
-				if (SHO__n0_C__p1_T.executed)sumNodes.push_back(&SHO__n0_C__p1_T);
-				if (SHO__n0_C__p1_C__p1_T__ac.executed)sumNodes.push_back(&SHO__n0_C__p1_C__p1_T__ac);
-				if (SHO__p1_W__p2_T__ac.executed)sumNodes.push_back(&SHO__p1_W__p2_T__ac);
-				if (SHO__p2_W__p1_T__ac.executed)sumNodes.push_back(&SHO__p2_W__p1_T__ac);
-
-				if (SHO__p1_Whc__p1_T.executed)sumNodes.push_back(&SHO__p1_Whc__p1_T);
-				if (SHO__p1_Whc__p2_T.executed)sumNodes.push_back(&SHO__p1_Whc__p2_T);
-				if (SHO__p2_Wec__p1_Whc__p1_T.executed)sumNodes.push_back(&SHO__p2_Wec__p1_Whc__p1_T);
-				if (SHO__p2_Wec__p1_Whc__n0_C__p1_T.executed)sumNodes.push_back(&SHO__p2_Wec__p1_Whc__n0_C__p1_T);
-				if (SHO__p1_Whc__ac.executed)sumNodes.push_back(&SHO__p1_Whc__ac);
-				if (SHO__p1_Whc__n0_C__p1_T.executed)sumNodes.push_back(&SHO__p1_Whc__n0_C__p1_T);
-				if (SHO__p1_Whc__p2_T__ac.executed)sumNodes.push_back(&SHO__p1_Whc__p2_T__ac);
-				if (SHO__p2_Whc__p1_T__ac.executed)sumNodes.push_back(&SHO__p2_Whc__p1_T__ac);
-			}
-
-			if (ac.isPopWord()){
-				if (PW__p1_Whc__n0_C.executed)sumNodes.push_back(&PW__p1_Whc__n0_C);
-				if (PW__p2_Whc__p1_Whc.executed)sumNodes.push_back(&PW__p2_Whc__p1_Whc);
-				if (PW__p2_Wfc__p1_Whc.executed)sumNodes.push_back(&PW__p2_Wfc__p1_Whc);
-				if (PW__p2_Wec__p1_Whc.executed)sumNodes.push_back(&PW__p2_Wec__p1_Whc);
-				if (PW__p2_W__p1_Whc.executed)sumNodes.push_back(&PW__p2_W__p1_Whc);
-				if (PW__p2_Whc__p1_W.executed)sumNodes.push_back(&PW__p2_Whc__p1_W);
-				if (PW__p2_Whc__p1_Wl.executed)sumNodes.push_back(&PW__p2_Whc__p1_Wl);
-				if (PW__p2_Wl__p1_Whc.executed)sumNodes.push_back(&PW__p2_Wl__p1_Whc);
-				if (PW__p2_Whc__p1_C.executed)sumNodes.push_back(&PW__p2_Whc__p1_C);
-				if (PW__p1_Whc__p1_Wl.executed)sumNodes.push_back(&PW__p1_Whc__p1_Wl);
-
-				if (PW__p1_Wd__p1_T__p1_Wl.executed)sumNodes.push_back(&PW__p1_Wd__p1_T__p1_Wl);
-			}
-
-			if (ac.isArcLeftIn() || ac.isArcRightIn()){
-				if (SYN__s0s1_ALd__s0s1_CWl__ac.executed)sumNodes.push_back(&SYN__s0s1_ALd__s0s1_CWl__ac);
-				if (SYN__s0s1_ARd__s0s1_CWl__ac.executed)sumNodes.push_back(&SYN__s0s1_ARd__s0s1_CWl__ac);
-				if (SYN__s0s1_CWd__s0s1_CWl__ac.executed)sumNodes.push_back(&SYN__s0s1_CWd__s0s1_CWl__ac);
-			}
-			
-
 			if (prevStateNode != NULL){
-				sumNodes.push_back(prevStateNode);
+				outputs[ac._code].forward(cg, &sumNode, prevStateNode, ac._code);
 			}
-
-			outputs[ac._code].forward(cg, sumNodes, ac._code);
+			else{
+				outputs[ac._code].forward(cg, &sumNode, ac._code);
+			}			
 		}
 	}
 

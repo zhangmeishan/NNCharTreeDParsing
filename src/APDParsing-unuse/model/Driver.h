@@ -124,12 +124,12 @@ private:
 
 		if (pGoldNode != pBestNode){
 			if (pGoldNode->loss.size() == 0){
-				pGoldNode->loss = Mat::Zero(1, 1);				
+				pGoldNode->loss = Mat::Zero(1, 1);
 			}
 			pGoldNode->loss.coeffRef(0) = -1.0 / num;
 
 			if (pBestNode->loss.size() == 0){
-				pBestNode->loss = Mat::Zero(1, 1);				
+				pBestNode->loss = Mat::Zero(1, 1);
 			}
 			pBestNode->loss.coeffRef(0) = 1.0 / num;
 

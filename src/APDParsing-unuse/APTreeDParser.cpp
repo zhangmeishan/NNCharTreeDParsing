@@ -333,7 +333,7 @@ void TreeDParser::train(const string& trainFile, const string& devFile, const st
 		}
 
 		if (bEvaluate && devNum > 0) {
-			clock_t time_start = clock();
+			int time_start = clock();
 			std::cout << "Dev start." << std::endl;
 			bCurIterBetter = false;
 			if (!m_options.outBest.empty())
@@ -360,7 +360,7 @@ void TreeDParser::train(const string& trainFile, const string& devFile, const st
 
 
 			if (testNum > 0) {
-				time_start = clock();
+				int time_start = clock();
 				std::cout << "Test start." << std::endl;
 				if (!m_options.outBest.empty())
 					decodeInstResults.clear();
@@ -386,7 +386,7 @@ void TreeDParser::train(const string& trainFile, const string& devFile, const st
 
 			for (int idx = 0; idx < otherInsts.size(); idx++) {
 				std::cout << "processing " << m_options.testFiles[idx] << std::endl;
-				time_start = clock();
+				int time_start = clock();
 				if (!m_options.outBest.empty())
 					decodeInstResults.clear();
 				metricseg_test.reset(); metricpos_test.reset(); metricarc_test.reset(); metricdep_test.reset();
