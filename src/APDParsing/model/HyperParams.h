@@ -19,11 +19,13 @@ struct HyperParams{
 	unordered_map<string, unordered_map<string, int> > word_tags;
 	int maxfreq;
 	int threshold;
+	
 
 
 	dtype nnRegular; // for optimization
 	dtype adaAlpha;  // for optimization
 	dtype adaEps; // for optimization
+	dtype scale;
 
 public:
 	HyperParams(){
@@ -42,6 +44,7 @@ public:
 		nnRegular = opt.regParameter;
 		adaAlpha = opt.adaAlpha;
 		adaEps = opt.adaEps;
+		scale = opt.scale;
 	}
 
 	void clear(){
