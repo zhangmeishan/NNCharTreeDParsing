@@ -21,7 +21,7 @@ using namespace std;
 
 class TreeDParser {
 public:
-	TreeDParser();
+	TreeDParser(size_t memsize);
 	virtual ~TreeDParser();
 
 public:

@@ -23,7 +23,7 @@ struct ActionedNodes {
 	vector<SPAddNode> outputs;
 
 public:
-	inline void initial(ModelParams& params, HyperParams& hyparams){
+	inline void initial(ModelParams& params, HyperParams& hyparams, AlignedMemoryPool* mem){
 		SHIs.setParam(&params.SHIs);
 		PWs.setParam(&params.PWs);
 		SYNs1.setParam(&params.SYNs1);
@@ -33,8 +33,19 @@ public:
 		SHOAcs.setParam(&params.SHOAcs);
 		ARCIns.setParam(&params.ARCIns);
 
-
 		outputs.resize(hyparams.action_num);
+		
+		SHIs.init(hyparams.action_num, -1, mem);
+		PWs.init(hyparams.action_num, -1, mem);
+		SYNs1.init(hyparams.action_num, -1, mem);
+		SYNs2.init(hyparams.action_num, -1, mem);
+		SYNChars.init(hyparams.action_num, -1, mem);
+		SHOs.init(hyparams.action_num, -1, mem);
+		SHOAcs.init(hyparams.action_num, -1, mem);
+		ARCIns.init(hyparams.action_num, -1, mem);				
+		for (int idx = 0; idx < hyparams.action_num; idx++) {
+			outputs[idx].init(1, -1, mem);
+		}
 	}
 
 

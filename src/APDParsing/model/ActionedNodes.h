@@ -191,7 +191,7 @@ struct ActionedNodes {
 	vector<SPAddNode> outputs;
 
 public:
-	inline void initial(ModelParams& params, HyperParams& hyparams){
+	inline void initial(ModelParams& params, HyperParams& hyparams, AlignedMemoryPool* mem){
 		SHI__p1_C__n0_C.setParam(&params.SHI__p1_C__n0_C);
 		SHI__p1_Wfc__n0_C.setParam(&params.SHI__p1_Wfc__n0_C);
 		SHI__p2_Ct__p1_Ct__p2_Ct.setParam(&params.SHI__p2_Ct__p1_Ct__p2_Ct);
@@ -368,9 +368,194 @@ public:
 		SYN__s0s1_CWd__s0s1_CWl__ac.setParam(&params.SYN__s0s1_CWd__s0s1_CWl__ac);
 		PW__p1_Wd__p1_T__p1_Wl.setParam(&params.PW__p1_Wd__p1_T__p1_Wl);
 
-		sumNode.setParam(hyparams.action_num);
-		sumScaleNode.setParam(hyparams.action_num, hyparams.scale);
+		sumScaleNode.setParam(hyparams.scale);	
 		outputs.resize(hyparams.action_num);
+
+
+		SHI__p1_C__n0_C.init(hyparams.action_num, -1, mem);
+		SHI__p1_Wfc__n0_C.init(hyparams.action_num, -1, mem);
+		SHI__p2_Ct__p1_Ct__p2_Ct.init(hyparams.action_num, -1, mem);
+		PW__p1_C__n0_C.init(hyparams.action_num, -1, mem);
+		PW__p1_Wfc__n0_C.init(hyparams.action_num, -1, mem);
+		PW__p2_Ct__p1_Ct__p2_Ct.init(hyparams.action_num, -1, mem);
+		PW__p1_W.init(hyparams.action_num, -1, mem);
+		PW__p1_Wd__p1_Wl.init(hyparams.action_num, -1, mem);
+		PW__p1_WSingle.init(hyparams.action_num, -1, mem);
+		PW__p1_W__n0_C.init(hyparams.action_num, -1, mem);
+		PW__p2_W__p1_W.init(hyparams.action_num, -1, mem);
+		PW__p2_Wfc__p1_W.init(hyparams.action_num, -1, mem);
+		PW__p2_Wec__p1_W.init(hyparams.action_num, -1, mem);
+		PW__p2_Wfc__p1_Wfc.init(hyparams.action_num, -1, mem);
+		PW__p2_Wec__p1_C.init(hyparams.action_num, -1, mem);
+		PW__p2_W__p1_Wl.init(hyparams.action_num, -1, mem);
+		PW__p2_Wl__p1_W.init(hyparams.action_num, -1, mem);
+		PW__p2_W__p1_C.init(hyparams.action_num, -1, mem);
+		PW__p1_Wfc__p1_Wl.init(hyparams.action_num, -1, mem);
+		PW__p1_C__p1_Wl.init(hyparams.action_num, -1, mem);
+		for (int idx = 0; idx < PW__p1_Wmc__p1_C__p1_T.size(); idx++) {
+			PW__p1_Wmc__p1_C__p1_T[idx].init(hyparams.action_num, -1, mem);
+		}
+		SYN__s0_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s0_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_W__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__n1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__n1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s1_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s1_W__s0_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s1_W__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s0_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s1_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s1_W__s0_T__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd1_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd1_P__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd1_W__s0rd1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld1_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld1_P__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld1_W__s0ld1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd2_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd2_P__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd2_W__s0rd2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld2_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld2_P__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld2_W__s0ld2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s0ld1_T__s0ld2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s0rd1_T__s0rd2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_T__s1ld1_T__s1ld2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_T__s1rd1_T__s1rd2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s0ld1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s0rd1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s0ld2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s0rd2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s1ld1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s1rd1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s1ld2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s1rd2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_T__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_W__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s1_W__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s0_larity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s0_larity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s0_rarity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s0_rarity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_T__s1_larity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_W__s1_larity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_T__s1_rarity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_W__s1_rarity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_W__s0_T__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_W__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_T__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_W__s1_T__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__s0_W__s1_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__s0_T__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__s0_W__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__s0_T__s1_W__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s0_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_C__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s1_C__s0_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s1_C__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_T__s1_T__s1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s1_C__s0_T__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd1_C__s0rd1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld1_C__s0ld1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd2_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0rd2_C__s0rd2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld2_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0ld2_C__s0ld2_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_C__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s1_C__s0s1_dist__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s0_larity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s0_rarity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_C__s1_larity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_C__s1_rarity__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0_C__s0_T__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_C__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__s1_C__s1_T__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__s0_C__s1_C__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__s0_C__s1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__n0_C__s0_T__s1_C__ac.init(hyparams.action_num, -1, mem);
+		SHO__p1_W__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p1_W__p2_T.init(hyparams.action_num, -1, mem);
+		SHO__p2_Wec__p1_W__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p2_Wec__p1_W__n0_C__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p1_C__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p1_Cc__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p1_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__p1_Wl__p1_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__p1_Wl__p1_T__p2_T.init(hyparams.action_num, -1, mem);
+		SHO__p1_Wl__p1_T__p2_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__p1_W__ac.init(hyparams.action_num, -1, mem);
+		SHO__p1_T__p2_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__p1_W__n0_C__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__n0_C__ac.init(hyparams.action_num, -1, mem);
+		SHO__n0_Cc__ac.init(hyparams.action_num, -1, mem);
+		SHO__n0_C__p1_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__n0_C__p1_T__p2_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__n0_C__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__n0_C__p1_C__p1_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__p1_W__p2_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__p2_W__p1_T__ac.init(hyparams.action_num, -1, mem);
+		SHI__p1_C__n0_C__p1_T.init(hyparams.action_num, -1, mem);
+		SHI__p1_Wfc__n0_C__p1_T.init(hyparams.action_num, -1, mem);
+		SHI__p2_Ct__p1_Ct__n0_Ct__p1_T.init(hyparams.action_num, -1, mem);
+		PW__p1_Whc__n0_C.init(hyparams.action_num, -1, mem);
+		PW__p2_Whc__p1_Whc.init(hyparams.action_num, -1, mem);
+		PW__p2_Wfc__p1_Whc.init(hyparams.action_num, -1, mem);
+		PW__p2_Wec__p1_Whc.init(hyparams.action_num, -1, mem);
+		PW__p2_W__p1_Whc.init(hyparams.action_num, -1, mem);
+		PW__p2_Whc__p1_W.init(hyparams.action_num, -1, mem);
+		PW__p2_Whc__p1_Wl.init(hyparams.action_num, -1, mem);
+		PW__p2_Wl__p1_Whc.init(hyparams.action_num, -1, mem);
+		PW__p2_Whc__p1_C.init(hyparams.action_num, -1, mem);
+		PW__p1_Whc__p1_Wl.init(hyparams.action_num, -1, mem);
+		SHO__p1_Whc__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p1_Whc__p2_T.init(hyparams.action_num, -1, mem);
+		SHO__p2_Wec__p1_Whc__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p2_Wec__p1_Whc__n0_C__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p1_Whc__ac.init(hyparams.action_num, -1, mem);
+		SHO__p1_Whc__n0_C__p1_T.init(hyparams.action_num, -1, mem);
+		SHO__p1_Whc__p2_T__ac.init(hyparams.action_num, -1, mem);
+		SHO__p2_Whc__p1_T__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0s1_ALd__s0s1_CWl__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0s1_ARd__s0s1_CWl__ac.init(hyparams.action_num, -1, mem);
+		SYN__s0s1_CWd__s0s1_CWl__ac.init(hyparams.action_num, -1, mem);
+		PW__p1_Wd__p1_T__p1_Wl.init(hyparams.action_num, -1, mem);
+
+
+		sumNode.init(hyparams.action_num, -1, mem);
+
+		sumScaleNode.init(hyparams.action_num, -1, mem);
+
+		for (int idx = 0; idx < hyparams.action_num; idx++) {
+			outputs[idx].init(1, -1, mem);
+		}
+		
 	}
 
 
